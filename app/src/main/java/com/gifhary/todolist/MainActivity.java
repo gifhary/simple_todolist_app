@@ -14,29 +14,27 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                finish();
+                if (hasSetName()) {
+                    Intent nameHasSet = new Intent(MainActivity.this, HomeActivity.class);
+                    startActivity(nameHasSet);
+                    finish();
+
+                } else {
+                    Intent nameNotSet = new Intent(MainActivity.this, SetNameActivity.class);
+                    startActivity(nameNotSet);
+                    finish();
+                }
             }
-        }, 3000L);
-
-        if (hasSetName()) {
-            Intent nameHasSet = new Intent(MainActivity.this, TripActivity.class);
-            finish();
-            startActivity(nameHasSet);
-
-        } else {
-            Intent nameNotSet = new Intent(MainActivity.this, LoginActivity.class);
-            finish();
-            startActivity(nameNotSet);
-        }
+        }, 2000);
     }
 
     private boolean hasSetName(){
         SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
-        return prefs.getBoolean("hasLoggedIn", false);
+        return prefs.getBoolean("hasSetName", false);
     }
 }
