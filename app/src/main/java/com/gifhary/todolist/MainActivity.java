@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
     public static final String PREFERENCES = "prefs";
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean hasSetName(){
         SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
-        return prefs.getBoolean("hasSetName", false);
+        String userName = prefs.getString("userName", "");
+
+        Log.d(TAG, "has user set their name? : " + userName);
+        return !userName.equals("");
     }
 }

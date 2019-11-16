@@ -1,11 +1,11 @@
 package com.gifhary.todolist;
 
-public class MenuInfo {
+public class ListInfo {
     private String iconName;
     private String menuName;
     private int taskCount;
 
-    public MenuInfo(String iconName, String menuName, int taskCount) {
+    public ListInfo(String iconName, String menuName, int taskCount) {
         this.iconName = iconName;
         this.menuName = menuName;
         this.taskCount = taskCount;

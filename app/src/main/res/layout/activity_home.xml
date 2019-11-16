@@ -11,7 +11,7 @@
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
+        android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" >
@@ -19,8 +19,8 @@
         <ImageView
             android:contentDescription="@string/user_avatar"
             android:id="@+id/userAvatarImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:text="@string/your_name"
             android:textColor="@color/black"
@@ -59,7 +59,7 @@
     <ListView
         android:id="@+id/menuListView"
         android:layout_width="match_parent"
-        android:background="@color/colorAccent"
+        android:background="@color/white"
         android:layout_height="0dp"
         android:layout_marginTop="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
