@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">ToDoList</string>
+    <string name="today_date">today date</string>
     <string name="logo">Logo</string>
     <string name="save">Save</string>
     <string name="your_name">Your Name</string>
@@ -9,4 +10,9 @@
     <string name="menu_name">Menu name</string>
     <string name="menu_icon">Menu icon</string>
     <string name="zero">0</string>
+
+    <string name="to_do">To Do</string>
+    <string name="important">Important</string>
+    <string name="planned">Planned</string>
+    <string name="today">Today</string>
 </resources>

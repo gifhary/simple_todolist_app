@@ -13,28 +13,31 @@ import android.widget.Toast;
 import static com.gifhary.todolist.MainActivity.PREFERENCES;
 
 public class SetNameActivity extends AppCompatActivity {
-    private EditText yourNameEditText;
     private static final String TAG = "SetNameActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_name);
-
-        yourNameEditText = findViewById(R.id.yourNameEditText);
     }
 
     public void setName(View view){
-        String userName = yourNameEditText.getText().toString();
+        EditText yourNameEditText = findViewById(R.id.yourNameEditText);
+        final String userName = yourNameEditText.getText().toString();
 
         if (!userName.equals("")){
-            SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
-            SharedPreferences.Editor prefsEditor = prefs.edit();
+            //saving user name in another thread to avoid UI interruption
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
+                    SharedPreferences.Editor prefsEditor = prefs.edit();
 
-            Log.d(TAG, "userName : " + userName);
-
-            prefsEditor.putString("userName", userName);
-            prefsEditor.apply();
+                    Log.d(TAG, "userName : " + userName);
+                    prefsEditor.putString("userName", userName);
+                    prefsEditor.apply();
+                }
+            }).start();
 
             moveToHome();
         }else {

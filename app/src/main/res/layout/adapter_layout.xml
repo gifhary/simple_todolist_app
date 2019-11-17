@@ -15,15 +15,15 @@
         android:text="@string/menu_name"
         android:textColor="@color/black"
         android:textSize="18sp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/menuIconImageView"
         app:layout_constraintStart_toEndOf="@+id/menuIconImageView"
         app:layout_constraintTop_toTopOf="@+id/menuIconImageView" />
 
     <ImageView
         android:id="@+id/menuIconImageView"
-        android:maxHeight="40dp"
-        android:maxWidth="40dp"
+        android:maxHeight="50dp"
+        android:maxWidth="50dp"
+        android:adjustViewBounds="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"

@@ -38,6 +38,7 @@ public class ListAdapter extends ArrayAdapter<ListInfo> {
         int taskCount = Objects.requireNonNull(getItem(position)).getTaskCount();
 
         String taskCountStr = "";
+        //put empty text if task count is zero
         if (taskCount > 0){
             taskCountStr = String.valueOf(taskCount);
         }
@@ -49,6 +50,7 @@ public class ListAdapter extends ArrayAdapter<ListInfo> {
         TextView menuNameTextView = convertView.findViewById(R.id.menuNameTextView);
         TextView taskCountTextView = convertView.findViewById(R.id.taskCountTextView);
 
+        //set listView item for avatar images listView
         if (iconName.contains("avatar")){
             try {
                 AssetManager assetManager = context.getAssets();
@@ -67,7 +69,9 @@ public class ListAdapter extends ArrayAdapter<ListInfo> {
                 Log.d(TAG, "ERROR : LOAD IMAGE FROM ASSETS");
             }
             return convertView;
-        }else {
+        }
+        //set listView item for menu listView
+        else {
             int drawableId = context.getResources().getIdentifier(iconName, "drawable", context.getPackageName());
 
             menuIconImageView.setImageResource(drawableId);
