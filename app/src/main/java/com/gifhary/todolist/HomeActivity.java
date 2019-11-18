@@ -107,8 +107,6 @@ public class HomeActivity extends AppCompatActivity {
         avatarListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //remove change_avatar_layout view
-                ((ViewGroup)changeAvatarView.getParent()).removeView(changeAvatarView);
                 //dismiss alertDialog when user selected new avatar
                 alert.dismiss();
                 //update user avatar when user selected new avatar
@@ -181,6 +179,11 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+            }
+        });
+        alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
                 ((ViewGroup)changeAvatarView.getParent()).removeView(changeAvatarView);
             }
         });

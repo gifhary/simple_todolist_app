@@ -2,7 +2,8 @@
     <string name="app_name">ToDoList</string>
     <string name="today_date">today date</string>
     <string name="logo">Logo</string>
-    <string name="save">Save</string>
+    <string name="save">SAVE</string>
+    <string name="cancel">CANCEL</string>
     <string name="your_name">Your Name</string>
     <string name="first_step">First Step</string>
     <string name="user_avatar">User Avatar</string>
@@ -15,4 +16,8 @@
     <string name="important">Important</string>
     <string name="planned">Planned</string>
     <string name="today">Today</string>
+
+    <string name="task_name">Task name</string>
+    <string name="set_due_date">Set due date</string>
+    <string name="set_reminder">Set reminder</string>
 </resources>
