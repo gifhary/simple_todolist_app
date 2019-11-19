@@ -46,6 +46,12 @@ public class HomeActivity extends AppCompatActivity {
 
         //get username from preferences and display to username text view
         userName = loadName();
+        if (userName.equals("")){
+            //name not empty assurance. if empty go back to set name activity
+            Intent backToSetName = new Intent(HomeActivity.this, SetNameActivity.class);
+            startActivity(backToSetName);
+            finish();
+        }
         userNameTextView = findViewById(R.id.userNameTextView);
         userNameTextView.setText(userName);
         //set user name clickable to change name
@@ -305,7 +311,7 @@ public class HomeActivity extends AppCompatActivity {
     private String loadName(){
         Log.d(TAG, "loadName function");
         SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
-        String loadedUserName = prefs.getString("userName", "Your Name");
+        String loadedUserName = prefs.getString("userName", "");
 
         Log.d(TAG, "user name : " + loadedUserName);
         return loadedUserName;
