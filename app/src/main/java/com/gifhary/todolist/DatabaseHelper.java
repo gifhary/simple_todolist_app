@@ -3,6 +3,7 @@ package com.gifhary.todolist;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -21,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN5 = "task_reminder";
     private static final String COLUMN6 = "task_importance" ;
 
-    public DatabaseHelper(@Nullable Context context) {
+    DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, 1);
     }
 
@@ -44,7 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long addData(String taskName, String taskDate, String taskTime, int taskReminder, int taskImportance){
+    long addData(String taskName, String taskDate, String taskTime, int taskReminder, int taskImportance){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN2, taskName);
@@ -56,15 +57,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.insert(TABLE_NAME, null, contentValues);
     }
 
-    public Cursor getAllData(){
+    Cursor getAllData(){
         SQLiteDatabase db = this.getWritableDatabase();
         return db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
     }
 
-    public int deleteData(int id){
+    int deleteData(int id){
         String stringId = String.valueOf(id);
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_NAME, "id = "+ stringId, null);
+    }
+
+    long getTaskCount(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return DatabaseUtils.queryNumEntries(db, TABLE_NAME);
+    }
+
+    long getImportantCount(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return DatabaseUtils.queryNumEntries(db, TABLE_NAME, "task_importance = 1");
+    }
+
+    long getPlannedTaskCount(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return DatabaseUtils.queryNumEntries(db, TABLE_NAME, "task_date IS NOT NULL");
+    }
+
+    long getTodayTaskCount(String todayDate){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return DatabaseUtils.queryNumEntries(db, TABLE_NAME, "task_date = " + todayDate);
     }
 
 }

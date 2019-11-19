@@ -28,8 +28,11 @@ import java.util.Objects;
 import static com.gifhary.todolist.MainActivity.PREFERENCES;
 
 public class HomeActivity extends AppCompatActivity {
-
     private static final String TAG = "HomeActivity";
+
+    //all tasks data are here
+    private ArrayList<TaskConstructor> taskLists = new ArrayList<>();
+
     private String userName;
     private TextView userNameTextView;
     private ImageView userAvatarImageView;
@@ -44,8 +47,12 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        //get intent extra from splash screen
+        Intent intent = getIntent();
+        taskLists = intent.getParcelableArrayListExtra("taskData");
+
         //get username from preferences and display to username text view
-        userName = loadName();
+        userName = getStringPrefs("userName");
         if (userName.equals("")){
             //name not empty assurance. if empty go back to set name activity
             Intent backToSetName = new Intent(HomeActivity.this, SetNameActivity.class);
@@ -77,7 +84,7 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         //Load user avatar file name with loadAvatarFile function
-        String avatarFile = loadAvatarFile();
+        String avatarFile = getStringPrefs("avatarFile");
         userAvatarImageView = findViewById(R.id.userAvatarImageView);
         //if preferences is empty for avatar file name, default image displayed
         if (!avatarFile.equals("")){
@@ -127,6 +134,11 @@ public class HomeActivity extends AppCompatActivity {
         try {
             Class<?> aClass = Class.forName("com.gifhary.todolist." + activityName + "Activity");
             Intent intent = new Intent(this, aClass);
+
+            if (activityName.equals("ToDo")){
+                intent.putParcelableArrayListExtra("taskData", taskLists);
+            }
+
             startActivity(intent);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -135,41 +147,22 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    private void updateAvatar(final String filename){
+    private void updateAvatar(String filename){
         try {
-            //update avatar in imageView
             AssetManager assetManager = this.getAssets();
             InputStream inputStream = assetManager.open("avatars/" + filename);
             Drawable drawable = Drawable.createFromStream(inputStream, null);
 
+            //update avatar in imageView
             userAvatarImageView.setImageDrawable(drawable);
+
+            //update avatar in shared preferences
+            setStringPrefs("avatarFile", filename);
         }catch (IOException e){
             e.printStackTrace();
             Log.d(TAG, "ERROR : update image");
             Toast.makeText(getApplicationContext(), "ERROR : update image", Toast.LENGTH_LONG).show();
         }
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //update avatar file name in sharedPreferences
-                SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
-                SharedPreferences.Editor prefsEditor = prefs.edit();
-                Log.d(TAG, "avatar file : " + filename);
-                prefsEditor.putString("avatarFile", filename);
-                prefsEditor.apply();
-            }
-        }).start();
-    }
-
-    //load avatar file name from preferences and return file name in string
-    private String loadAvatarFile(){
-        Log.d(TAG, "loadAvatar function");
-        SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
-        String loadedAvatarFile = prefs.getString("avatarFile", "");
-
-        Log.d(TAG, "avatar file name : " + loadedAvatarFile);
-        return loadedAvatarFile;
     }
 
     private void showChangeAvatarDialog(){
@@ -241,8 +234,14 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                if (isNameEdited(editNameEditText.getText().toString()) && !editNameEditText.getText().toString().equals("")){
-                    updateUserName(String.valueOf(editNameEditText.getText()));
+                String newName = editNameEditText.getText().toString();
+                if (isNameEdited(newName) && !newName.equals("")){
+                    //update user name in textView
+                    userName = newName;
+                    userNameTextView.setText(userName);
+                    //update user name in shared preferences
+                    setStringPrefs("userName", newName);
+                    Log.d(TAG, "new name : " + newName);
                 }
                 else if (String.valueOf(editNameEditText.getText()).equals("")){
                     Toast.makeText(getApplicationContext(), "Enter your name", Toast.LENGTH_LONG).show();
@@ -264,33 +263,19 @@ public class HomeActivity extends AppCompatActivity {
         return !newName.equals(userName);
     }
 
-    private void updateUserName(final String newName){
-        userName = newName;
-        //update user name in textView
-        userNameTextView.setText(userName);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //save edited name in preferences
-                SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
-                SharedPreferences.Editor prefsEditor = prefs.edit();
-                prefsEditor.putString("userName", newName);
-                prefsEditor.apply();
-            }
-        }).start();
-
-        Log.d(TAG, "new name : " + newName);
-    }
-
-    //TODO task count should come from actual task count in database, except for avatar list view
+    /*
+    Store menu names into ArrayList with ListInfo object
+    with data of icon file name (file name must use menu name in lowercase),
+    menu name itself from string array and item count from sharedPreferences
+    with menu name as the pref key
+     */
     private void addToListView(ListView listView, String[] listNames){
         ArrayList<ListInfo> list = new ArrayList<>();
 
         Log.d(TAG, "addToMenuList function");
         ListInfo listInfo;
         for (String listName : listNames) {
-            listInfo = new ListInfo(listName.toLowerCase(), listName, 0);
+            listInfo = new ListInfo(listName.toLowerCase(), listName, getIntPrefs(listName));
             list.add(listInfo);
 
             Log.d(TAG, "menu name : " + listName);
@@ -307,13 +292,31 @@ public class HomeActivity extends AppCompatActivity {
         listView.setAdapter(menuAdapter);
     }
 
-    //get userName from sharedPreferences
-    private String loadName(){
-        Log.d(TAG, "loadName function");
+    private int getIntPrefs(String key){
+        Log.d(TAG, "getIntPrefs function");
         SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
-        String loadedUserName = prefs.getString("userName", "");
 
-        Log.d(TAG, "user name : " + loadedUserName);
-        return loadedUserName;
+        return prefs.getInt(key, 0);
+    }
+
+    private String getStringPrefs(String key){
+        Log.d(TAG, "getStringPrefs function");
+        SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
+
+        return prefs.getString(key, "");
+    }
+
+    private void setStringPrefs(final String key, final String value){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "setStringPrefs function");
+                SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
+                SharedPreferences.Editor prefsEditor = prefs.edit();
+
+                prefsEditor.putString(key, value);
+                prefsEditor.apply();
+            }
+        }).start();
     }
 }

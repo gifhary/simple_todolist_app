@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,8 +33,6 @@ import java.util.Calendar;
 
 public class ToDoActivity extends AppCompatActivity {
     private static final String TAG = "ToDoActivity";
-
-    private DatabaseHelper databaseHelper;
 
     //all tasks data are here
     private ArrayList<TaskConstructor> taskLists = new ArrayList<>();
@@ -62,8 +61,10 @@ public class ToDoActivity extends AppCompatActivity {
         //remove title in action bar
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         //database class
-        databaseHelper = new DatabaseHelper(ToDoActivity.this);
-        getAllTask();
+
+        //get intent extra from splash screen
+        Intent intent = getIntent();
+        taskLists = intent.getParcelableArrayListExtra("taskData");
 
         TextView todayDateTextView = findViewById(R.id.todayDateTextView);
         //get today date and display
@@ -174,6 +175,8 @@ public class ToDoActivity extends AppCompatActivity {
     }
 
     private void saveTask(String taskName){
+        DatabaseHelper databaseHelper = new DatabaseHelper(ToDoActivity.this);
+
         //add data method will return row id of data just inserted
         long result = databaseHelper.addData(taskName, taskDate, taskTime, taskReminder, taskImportance);
 
@@ -198,28 +201,6 @@ public class ToDoActivity extends AppCompatActivity {
         taskTime = "";
         taskReminder = 0;
         taskImportance = 0;
-    }
-
-    private void getAllTask(){
-        //get all task from database
-        Log.d(TAG, "getAllTask");
-        Cursor cursor = databaseHelper.getAllData();
-
-        if (cursor.getCount() > 0){
-            while (cursor.moveToNext()) {
-                int id = cursor.getInt(cursor.getColumnIndex("id"));
-                String taskName = cursor.getString(cursor.getColumnIndex("task_name"));
-                String taskDate = cursor.getString(cursor.getColumnIndex("task_date"));
-                String taskTime = cursor.getString(cursor.getColumnIndex("task_time"));
-                int taskReminder = cursor.getInt(cursor.getColumnIndex("task_reminder"));
-                int taskImportance = cursor.getInt(cursor.getColumnIndex("task_importance"));
-
-                Log.d(TAG, "Loaded data from database : "+id+"|"+taskName+"|"+taskDate+"|"+taskTime+"|"+taskReminder+"|"+taskImportance);
-
-                //insert all data in tasksList with TaskConstructor object
-                taskLists.add(new TaskConstructor(id, taskName, taskDate, taskTime, taskReminder, taskImportance));
-            }
-        }
     }
 
     private void showDatePicker(){
