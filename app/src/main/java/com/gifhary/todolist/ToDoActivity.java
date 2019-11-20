@@ -3,6 +3,7 @@ package com.gifhary.todolist;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +28,7 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -176,7 +178,12 @@ public class ToDoActivity extends AppCompatActivity {
         setDueDateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDatePicker();
+                if (taskDate.equals("")){
+                    showDatePicker();
+                }else {
+                    taskDate = "";
+                    changeBtnColor(setDueDateBtn, taskDate);
+                }
             }
         });
         setReminderBtn.setOnClickListener(new View.OnClickListener() {
@@ -292,7 +299,7 @@ public class ToDoActivity extends AppCompatActivity {
 
                         Log.d(TAG,"User pick time : "+hourOfDay + ":" + minute);
                     }
-                }, currentHour, currentMinute, true);
+                }, currentHour, currentMinute, is24HourFormat());
         timePickerDialog.show();
     }
 
@@ -300,6 +307,10 @@ public class ToDoActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d");
         return dateFormat.format(calendar.getTime());
+    }
+
+    private boolean is24HourFormat(){
+        return android.text.format.DateFormat.is24HourFormat(this);
     }
 
     private void setBoolPrefs(final String key, final boolean value){
