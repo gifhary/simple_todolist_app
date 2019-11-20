@@ -60,7 +60,9 @@ public class HomeActivity extends AppCompatActivity {
 
         //get intent extra from splash screen
         Intent intent = getIntent();
-        taskLists = intent.getParcelableArrayListExtra("taskData");
+        if (intent.getParcelableArrayListExtra("taskData") != null){
+            taskLists = intent.getParcelableArrayListExtra("taskData");
+        }
 
         //get username from preferences and display to username text view
         userName = getStringPrefs("userName");
