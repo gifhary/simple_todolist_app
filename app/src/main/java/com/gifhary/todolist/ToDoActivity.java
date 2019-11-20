@@ -4,13 +4,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,8 @@ public class ToDoActivity extends AppCompatActivity {
 
     //all tasks data are here
     private ArrayList<TaskConstructor> taskLists = new ArrayList<>();
+
+    private TaskAdapter taskAdapter;
 
     private String taskDate = "";
     private String taskTime = "";
@@ -70,6 +73,9 @@ public class ToDoActivity extends AppCompatActivity {
         //get today date and display
         todayDateTextView.setText(getTodayDate());
 
+        //show task list in cardView list
+        showTaskCardViewList();
+
         FloatingActionButton addTaskButton = findViewById(R.id.addTaskButton);
         //floating button for new task
         addTaskButton.setOnClickListener(new View.OnClickListener() {
@@ -92,6 +98,18 @@ public class ToDoActivity extends AppCompatActivity {
         cancelTextView = addTaskView.findViewById(R.id.cancelTextView);
         //all components in new task dialog
 
+    }
+
+    private void showTaskCardViewList(){
+        RecyclerView recTaskList = findViewById(R.id.recTaskList);
+        recTaskList.setHasFixedSize(true);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recTaskList.setLayoutManager(linearLayoutManager);
+
+        taskAdapter = new TaskAdapter(ToDoActivity.this, R.layout.card_view_adapter_layout, taskLists);
+        recTaskList.setAdapter(taskAdapter);
     }
 
     private void showAddTaskDialog(){
@@ -190,6 +208,9 @@ public class ToDoActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Task added", Toast.LENGTH_LONG).show();
             //immediately added to taskLists array instead of get newly added data from database
             taskLists.add(new TaskConstructor((int) result, taskName, taskDate, taskTime, taskReminder, taskImportance));
+
+            //update recycler view
+            taskAdapter.notifyItemInserted(taskLists.size()-1);
 
             //set all new task variable to default value
             setVarToDefault();
