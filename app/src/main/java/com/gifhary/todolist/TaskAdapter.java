@@ -2,6 +2,7 @@ package com.gifhary.todolist;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+
+import static com.gifhary.todolist.MainActivity.PREFERENCES;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
     private static final String TAG = "TaskAdapter";
@@ -76,6 +79,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 Log.d(TAG, "Deleted task id : " + id + " result : " +result);
                 taskLists.remove(position);
                 notifyItemRemoved(position);
+                notifyItemRangeChanged(position, taskLists.size());
+
+                setBoolPrefs("isTaskEdited", true);
             }
         });
     }
@@ -98,9 +104,24 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     result = dh.updateData(id, contentValues);
                     Log.d(TAG, "Updated task id : " + id + " result : " +result);
                 }
+                setBoolPrefs("isTaskEdited", true);
             }
         });
 
+    }
+
+    private void setBoolPrefs(final String key, final boolean value){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "setStringPrefs function");
+                SharedPreferences prefs = context.getSharedPreferences(PREFERENCES, 0);
+                SharedPreferences.Editor prefsEditor = prefs.edit();
+
+                prefsEditor.putBoolean(key, value);
+                prefsEditor.apply();
+            }
+        }).start();
     }
 
     static class TaskViewHolder extends RecyclerView.ViewHolder {

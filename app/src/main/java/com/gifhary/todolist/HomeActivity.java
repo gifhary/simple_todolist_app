@@ -24,15 +24,25 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Objects;
 
 import static com.gifhary.todolist.MainActivity.PREFERENCES;
 
 public class HomeActivity extends AppCompatActivity {
     private static final String TAG = "HomeActivity";
+    //Home page menu items
+    private final String[] menuNames = new String[]{"ToDo", "Important", "Planned", "Today"};
+    private ListView menuListView;
 
     //all tasks data are here
     private ArrayList<TaskConstructor> taskLists = new ArrayList<>();
+    //important tasks
+    private ArrayList<TaskConstructor> importantTasks = new ArrayList<>();
+    //planned tasks
+    private ArrayList<TaskConstructor> plannedTasks = new ArrayList<>();
+    //today tasks
+    private ArrayList<TaskConstructor> todayTasks = new ArrayList<>();
 
     private String userName;
     private TextView userNameTextView;
@@ -70,9 +80,8 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        //Home page menu items
-        final String[] menuNames = new String[]{"ToDo", "Important", "Planned", "Today"};
-        ListView menuListView = findViewById(R.id.menuListView);
+
+        menuListView = findViewById(R.id.menuListView);
         //show menu items to list view
         addToListView(menuListView, menuNames);
 
@@ -139,8 +148,18 @@ public class HomeActivity extends AppCompatActivity {
             if (activityName.equals("ToDo")){
                 intent.putParcelableArrayListExtra("taskData", taskLists);
             }
+            if (activityName.equals("Important")){
+                intent.putParcelableArrayListExtra("taskData", importantTasks);
+            }
+            if (activityName.equals("Planned")){
+                intent.putParcelableArrayListExtra("taskData", plannedTasks);
+            }
+            if (activityName.equals("Today")){
+                intent.putParcelableArrayListExtra("taskData", todayTasks);
+            }
 
             startActivity(intent);
+
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             Log.d(TAG, "ERROR : CLASS NOT FOUND");
@@ -307,6 +326,13 @@ public class HomeActivity extends AppCompatActivity {
         return prefs.getString(key, "");
     }
 
+    private boolean getBoolPrefs(String key){
+        Log.d(TAG, "getStringPrefs function");
+        SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
+
+        return prefs.getBoolean(key, false);
+    }
+
     private void setStringPrefs(final String key, final String value){
         new Thread(new Runnable() {
             @Override
@@ -321,10 +347,70 @@ public class HomeActivity extends AppCompatActivity {
         }).start();
     }
 
+    private void setBoolPrefs(final String key, final boolean value){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "setStringPrefs function");
+                SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
+                SharedPreferences.Editor prefsEditor = prefs.edit();
+
+                prefsEditor.putBoolean(key, value);
+                prefsEditor.apply();
+            }
+        }).start();
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        taskLists = getAllTask();
+        if (getBoolPrefs("isTaskEdited")){
+            taskLists = getAllTask();
+            divideTaskData(taskLists);
+
+            setBoolPrefs("isTaskEdited", false);
+        }
+    }
+
+    private void divideTaskData(final ArrayList<TaskConstructor> list){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (TaskConstructor task : list){
+                    if(task.getTaskImportance() != 0){
+                        importantTasks.add(task);
+                    }
+                    if (!task.getTaskDate().equals("")){
+                        plannedTasks.add(task);
+                    }
+                    if (task.getTaskDate().equals(getTodayDate())){
+                        todayTasks.add(task);
+                    }
+                }
+
+                refreshTaskCounts();
+
+            }
+        }).start();
+    }
+
+    private void refreshTaskCounts(){
+        setIntPrefs("ToDo", taskLists.size());
+        setIntPrefs("Important", importantTasks.size());
+        setIntPrefs("Planned", plannedTasks.size());
+        setIntPrefs("Today", todayTasks.size());
+
+        addToListView(menuListView, menuNames);
+    }
+
+    private String getTodayDate(){
+        Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+
+        Log.d(TAG, "Today : "+day+ "/" + month + "/" + year);
+        return day+ "/" + month + "/" + year;
     }
 
     private ArrayList<TaskConstructor> getAllTask(){
