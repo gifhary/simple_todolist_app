@@ -102,7 +102,7 @@ public class HomeActivity extends AppCompatActivity {
         if (!avatarFile.equals("")){
             try {
                 AssetManager assetManager = this.getAssets();
-
+                //read avatar image from assets/avatars folder
                 InputStream inputStream = assetManager.open("avatars/" + avatarFile);
                 Drawable drawable = Drawable.createFromStream(inputStream, null);
 
@@ -147,6 +147,7 @@ public class HomeActivity extends AppCompatActivity {
             Class<?> aClass = Class.forName("com.gifhary.todolist." + activityName + "Activity");
             Intent intent = new Intent(this, aClass);
 
+            //transfer task list according to menu category to target activity
             if (activityName.equals("ToDo")){
                 intent.putParcelableArrayListExtra("taskData", taskLists);
             }
@@ -336,6 +337,9 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setStringPrefs(final String key, final String value){
+        //not sure if this a good way to do this
+        //but they say on internet, non-UI related process
+        //should be processed in non-UI thread to improve UX
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -408,6 +412,8 @@ public class HomeActivity extends AppCompatActivity {
         return day+ "/" + month + "/" + year;
     }
 
+    //might use another way to update tasks list, at this time this is the simplest
+    //way to do, but not efficient
     private ArrayList<TaskConstructor> getAllTask(){
         DatabaseHelper databaseHelper = new DatabaseHelper(HomeActivity.this);
         ArrayList<TaskConstructor> taskLists = new ArrayList<>();
