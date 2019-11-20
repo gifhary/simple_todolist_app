@@ -7,7 +7,6 @@
     <string name="your_name">Your Name</string>
     <string name="first_step">First Step</string>
     <string name="user_avatar">User Avatar</string>
-    <string name="search">Search</string>
     <string name="menu_name">Menu name</string>
     <string name="menu_icon">Menu icon</string>
     <string name="zero">0</string>
@@ -20,4 +19,5 @@
     <string name="task_name">Task name</string>
     <string name="set_due_date">Set due date</string>
     <string name="set_reminder">Set reminder</string>
+    <string name="check_box">Check box</string>
 </resources>

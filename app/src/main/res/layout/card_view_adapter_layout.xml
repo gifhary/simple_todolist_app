@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="5dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:contentDescription="@string/check_box"
+            android:id="@+id/cardCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_box" />
+
+        <TextView
+            android:id="@+id/cardTaskName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:text="@string/task_name"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/cardCheckBox"
+            app:layout_constraintEnd_toStartOf="@+id/cardImportant"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/cardCheckBox"
+            app:layout_constraintTop_toTopOf="@+id/cardCheckBox" />
+
+        <ImageView
+            android:contentDescription="@string/important"
+            android:id="@+id/cardImportant"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/cardReminderIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/cardTaskName"
+            app:srcCompat="@drawable/important" />
+
+        <ImageView
+            android:contentDescription="@string/set_due_date"
+            android:id="@+id/cardDateIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/cardTaskName"
+            app:layout_constraintTop_toBottomOf="@+id/cardTaskName"
+            app:srcCompat="@drawable/ic_date" />
+
+        <TextView
+            android:id="@+id/cardDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/set_due_date"
+            app:layout_constraintBottom_toBottomOf="@+id/cardDateIcon"
+            app:layout_constraintStart_toEndOf="@+id/cardDateIcon"
+            app:layout_constraintTop_toTopOf="@+id/cardDateIcon" />
+
+        <ImageView
+            android:contentDescription="@string/set_reminder"
+            android:id="@+id/cardReminderIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/cardDate"
+            app:layout_constraintStart_toEndOf="@+id/cardDate"
+            app:layout_constraintTop_toTopOf="@+id/cardDate"
+            app:srcCompat="@drawable/ic_reminder" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
