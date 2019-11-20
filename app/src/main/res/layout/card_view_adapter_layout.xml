@@ -84,5 +84,14 @@
             app:layout_constraintTop_toTopOf="@+id/cardDate"
             app:srcCompat="@drawable/ic_reminder" />
 
+        <TextView
+            android:id="@+id/cardTaskId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/task_id"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

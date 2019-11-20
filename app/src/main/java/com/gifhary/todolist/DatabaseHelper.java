@@ -62,11 +62,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
     }
 
-    int deleteData(int id){
+    int deleteData(String id){
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_NAME, "id = "+ id, null);
     }
 
+    int updateData(String id, ContentValues values){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.update(TABLE_NAME, values, "id = " + id, null);
+    }
     long getTaskCount(){
         SQLiteDatabase db = this.getWritableDatabase();
         return DatabaseUtils.queryNumEntries(db, TABLE_NAME);
