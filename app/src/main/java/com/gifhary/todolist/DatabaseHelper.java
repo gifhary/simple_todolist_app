@@ -80,12 +80,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     long getPlannedTaskCount(){
         SQLiteDatabase db = this.getWritableDatabase();
-        return DatabaseUtils.queryNumEntries(db, TABLE_NAME, "task_date IS NOT NULL");
+        return DatabaseUtils.queryNumEntries(db, TABLE_NAME, "NOT task_date = ''");
     }
 
     long getTodayTaskCount(String todayDate){
         SQLiteDatabase db = this.getWritableDatabase();
-        return DatabaseUtils.queryNumEntries(db, TABLE_NAME, "task_date = " + todayDate);
+        return DatabaseUtils.queryNumEntries(db, TABLE_NAME, "task_date = '" + todayDate + "'");
     }
 
 }

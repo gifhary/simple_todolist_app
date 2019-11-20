@@ -53,8 +53,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean hasSetName(){
         SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
         String userName = prefs.getString("userName", "");
-        Log.d(TAG, "has user set their name? : " + userName);
+
         assert userName != null;
+        Log.d(TAG, "has user set their name? : " + !userName.equals(""));
         return !userName.equals("");
     }
 
@@ -117,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
+        Log.d(TAG, "Today : "+day+ "/" + month + "/" + year);
         return day+ "/" + month + "/" + year;
     }
 
