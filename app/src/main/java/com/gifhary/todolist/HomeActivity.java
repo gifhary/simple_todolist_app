@@ -80,8 +80,10 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        //dive task to another arrayList in each task category
-        divideTaskData(taskLists);
+        if (taskLists.size() > 0){
+            //dive task to another arrayList in each task category
+            divideTaskData(taskLists);
+        }
 
         menuListView = findViewById(R.id.menuListView);
         //show menu items to list view
