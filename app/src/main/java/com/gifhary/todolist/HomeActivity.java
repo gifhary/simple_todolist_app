@@ -80,6 +80,8 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        //dive task to another arrayList in each task category
+        divideTaskData(taskLists);
 
         menuListView = findViewById(R.id.menuListView);
         //show menu items to list view
@@ -348,50 +350,43 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setBoolPrefs(final String key, final boolean value){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "setStringPrefs function");
-                SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
-                SharedPreferences.Editor prefsEditor = prefs.edit();
+        Log.d(TAG, "setStringPrefs function");
+        SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
 
-                prefsEditor.putBoolean(key, value);
-                prefsEditor.apply();
-            }
-        }).start();
+        prefsEditor.putBoolean(key, value);
+        prefsEditor.apply();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume");
         if (getBoolPrefs("isTaskEdited")){
+            Log.d(TAG, "onResume : Task edited true");
             taskLists = getAllTask();
             divideTaskData(taskLists);
+            refreshTaskCounts();
 
             setBoolPrefs("isTaskEdited", false);
         }
     }
 
-    private void divideTaskData(final ArrayList<TaskConstructor> list){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (TaskConstructor task : list){
-                    if(task.getTaskImportance() != 0){
-                        importantTasks.add(task);
-                    }
-                    if (!task.getTaskDate().equals("")){
-                        plannedTasks.add(task);
-                    }
-                    if (task.getTaskDate().equals(getTodayDate())){
-                        todayTasks.add(task);
-                    }
-                }
-
-                refreshTaskCounts();
-
+    private synchronized void divideTaskData(final ArrayList<TaskConstructor> list){
+        importantTasks.clear();
+        plannedTasks.clear();
+        todayTasks.clear();
+        for (TaskConstructor task : list){
+            if(task.getTaskImportance() != 0){
+                importantTasks.add(task);
             }
-        }).start();
+            if (!task.getTaskDate().equals("")){
+                plannedTasks.add(task);
+            }
+            if (task.getTaskDate().equals(getTodayDate())){
+                todayTasks.add(task);
+            }
+        }
     }
 
     private void refreshTaskCounts(){

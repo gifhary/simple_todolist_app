@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,7 +25,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private int resource;
     private ArrayList<TaskConstructor> taskLists;
 
-    public TaskAdapter(Context context, int resource, ArrayList<TaskConstructor> taskLists) {
+    TaskAdapter(Context context, int resource, ArrayList<TaskConstructor> taskLists) {
         this.context = context;
         this.resource = resource;
         this.taskLists = taskLists;
@@ -46,7 +47,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.cardCheckBox.setImageResource(R.drawable.ic_box);
         holder.cardTaskName.setText(taskConstructor.getTaskName());
 
-        if (taskConstructor.getTaskImportance() == 1){ holder.cardImportantIcon.setImageResource(R.drawable.ic_star_on); }
+        if (taskConstructor.getTaskImportance() == 1){
+            holder.cardImportantIcon.setImageResource(R.drawable.ic_star_on); }
 
         if (!taskConstructor.getTaskDate().equals("")){
             holder.cardDate.setText(taskConstructor.getTaskDate());
@@ -60,8 +62,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
 
         setCheckListener(holder.cardCheckBox, holder.cardTaskId.getText().toString(), position);
-        setImportantListener(holder.cardImportantIcon, taskConstructor.getTaskImportance(), holder.cardTaskId.getText().toString());
-
+        setImportantListener(holder.cardImportantIcon,
+                taskConstructor.getTaskImportance(),
+                holder.cardTaskId.getText().toString(),
+                position);
     }
 
     @Override
@@ -80,13 +84,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 taskLists.remove(position);
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position, taskLists.size());
-
                 setBoolPrefs("isTaskEdited", true);
+
+                if (result > 0){
+                    Toast.makeText(imageView.getContext(), "Task done", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
 
-    private void setImportantListener(final ImageView imageView, final int currentValue, final String id){
+    private void setImportantListener(final ImageView imageView, final int currentValue, final String id, final int position){
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,13 +102,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 int result;
                 if (currentValue == 0){
                     imageView.setImageResource(R.drawable.ic_star_on);
+                    //value to update database
                     contentValues.put("task_importance", 1);
+                    //update database
                     result = dh.updateData(id, contentValues);
+                    //update data in taskList
+                    taskLists.get(position).setTaskImportance(1);
                     Log.d(TAG, "Updated task id : " + id + " result : " +result);
                 }else {
                     imageView.setImageResource(R.drawable.important);
+                    //value to update database
                     contentValues.put("task_importance", 0);
+                    //update database
                     result = dh.updateData(id, contentValues);
+                    //update data in taskList
+                    taskLists.get(position).setTaskImportance(0);
                     Log.d(TAG, "Updated task id : " + id + " result : " +result);
                 }
                 setBoolPrefs("isTaskEdited", true);
@@ -118,7 +133,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 SharedPreferences prefs = context.getSharedPreferences(PREFERENCES, 0);
                 SharedPreferences.Editor prefsEditor = prefs.edit();
 
-                prefsEditor.putBoolean(key, value);
+                prefsEditor.putBoolean("isTaskEdited", value);
                 prefsEditor.apply();
             }
         }).start();

@@ -103,7 +103,7 @@ public class ToDoActivity extends AppCompatActivity {
     }
 
     private void showTaskCardViewList(){
-        RecyclerView recTaskList = findViewById(R.id.plannedTaskList);
+        RecyclerView recTaskList = findViewById(R.id.allTaskList);
         recTaskList.setHasFixedSize(true);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -269,6 +269,10 @@ public class ToDoActivity extends AppCompatActivity {
     //TODO future time only can be selected
     //this code now allow any time to be selected
     private void showTimePicker(){
+        if (taskDate.equals("")){
+            Toast.makeText(getApplicationContext(), "Set date first", Toast.LENGTH_LONG).show();
+            return;
+        }
         Log.d(TAG, "Time picker dialog");
         // Get Current Time
         final Calendar c = Calendar.getInstance();
