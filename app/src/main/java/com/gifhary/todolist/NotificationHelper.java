@@ -4,10 +4,8 @@ import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.Intent;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
@@ -21,9 +19,9 @@ public class NotificationHelper extends ContextWrapper {
     private Context base;
 
     private int id;
-    private String title;
-    private String content;
-    private String info;
+    private String title = "some title";
+    private String content = "some content";
+    private String info = "some info";
 
     public NotificationHelper(Context base, int id) {
         super(base);
