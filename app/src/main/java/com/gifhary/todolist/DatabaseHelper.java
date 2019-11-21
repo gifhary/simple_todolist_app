@@ -127,7 +127,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     long getPlannedTaskCount(){
         SQLiteDatabase db = this.getWritableDatabase();
-        return DatabaseUtils.queryNumEntries(db, TABLE_NAME, "NOT" +COLUMN3+" = ''");
+        return DatabaseUtils.queryNumEntries(db, TABLE_NAME, "NOT " +COLUMN3+" = ''");
     }
 
     long getTodayTaskCount(String todayDate){
