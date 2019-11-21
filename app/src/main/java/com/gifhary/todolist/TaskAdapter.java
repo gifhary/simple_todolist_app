@@ -48,13 +48,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.cardTaskName.setText(taskConstructor.getTaskName());
 
         if (taskConstructor.getTaskImportance() == 1){
-            holder.cardImportantIcon.setImageResource(R.drawable.ic_star_on); }
-
-        if (!taskConstructor.getTaskDate().equals("")){
-            holder.cardDate.setText(taskConstructor.getTaskDate());
+            holder.cardImportantIcon.setImageResource(R.drawable.ic_star_on);
         }else {
+            holder.cardImportantIcon.setImageResource(R.drawable.important);
+        }
+
+        if (taskConstructor.getTaskDate().equals("")){
             holder.cardDateIcon.setVisibility(View.INVISIBLE);
             holder.cardDate.setVisibility(View.INVISIBLE);
+        }else {
+            holder.cardDate.setText(taskConstructor.getTaskDate());
         }
 
         if (taskConstructor.getTaskReminder() != 1){
@@ -101,22 +104,24 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 ContentValues contentValues = new ContentValues();
                 int result;
                 if (currentValue == 0){
-                    imageView.setImageResource(R.drawable.ic_star_on);
+                    //imageView.setImageResource(R.drawable.ic_star_on);
                     //value to update database
                     contentValues.put("task_importance", 1);
                     //update database
                     result = dh.updateData(id, contentValues);
                     //update data in taskList
                     taskLists.get(position).setTaskImportance(1);
+                    notifyItemChanged(position);
                     Log.d(TAG, "Updated task id : " + id + " result : " +result);
                 }else {
-                    imageView.setImageResource(R.drawable.important);
+                    //imageView.setImageResource(R.drawable.important);
                     //value to update database
                     contentValues.put("task_importance", 0);
                     //update database
                     result = dh.updateData(id, contentValues);
                     //update data in taskList
                     taskLists.get(position).setTaskImportance(0);
+                    notifyItemChanged(position);
                     Log.d(TAG, "Updated task id : " + id + " result : " +result);
                 }
                 setBoolPrefs("isTaskEdited", true);

@@ -68,7 +68,7 @@ public class HomeActivity extends AppCompatActivity {
         userName = getStringPrefs("userName");
         if (userName.equals("")){
             //name not empty assurance. if empty go back to set name activity
-            Intent backToSetName = new Intent(HomeActivity.this, SetNameActivity.class);
+            Intent backToSetName = new Intent(this, SetNameActivity.class);
             startActivity(backToSetName);
             finish();
         }
@@ -247,7 +247,7 @@ public class HomeActivity extends AppCompatActivity {
 
     //display edit name dialog box
     private void showEditNameDialog(){
-        LayoutInflater inflater = LayoutInflater.from(HomeActivity.this);
+        LayoutInflater inflater = LayoutInflater.from(this);
         final View view = inflater.inflate(R.layout.edit_name_layout, null, false);
 
         final EditText editNameEditText = view.findViewById(R.id.editNameEditText);
