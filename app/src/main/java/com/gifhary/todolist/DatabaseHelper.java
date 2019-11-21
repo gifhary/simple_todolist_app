@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -22,8 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN2 = "task_name";
     private static final String COLUMN3 = "task_date";
     private static final String COLUMN4 = "task_time";
-    private static final String COLUMN5 = "task_reminder";
-    private static final String COLUMN6 = "task_importance" ;
+    private static final String COLUMN5 = "task_importance" ;
 
     DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -36,8 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN2 + " TEXT, "
                 + COLUMN3 + " TEXT, "
                 + COLUMN4 + " TEXT, "
-                + COLUMN5 + " INTEGER DEFAULT 0, "
-                + COLUMN6 + " INTEGER DEFAULT 0);";
+                + COLUMN5 + " INTEGER DEFAULT 0);";
 
         db.execSQL(createTable);
     }
@@ -48,14 +45,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    long addData(String taskName, String taskDate, String taskTime, int taskReminder, int taskImportance){
+    long addData(String taskName, String taskDate, String taskTime, int taskImportance){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN2, taskName);
         contentValues.put(COLUMN3, taskDate);
         contentValues.put(COLUMN4, taskTime);
-        contentValues.put(COLUMN5, taskReminder);
-        contentValues.put(COLUMN6, taskImportance);
+        contentValues.put(COLUMN5, taskImportance);
 
         return db.insert(TABLE_NAME, null, contentValues);
     }
@@ -71,39 +67,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     String taskName = cursor.getString(cursor.getColumnIndex(COLUMN2));
                     String taskDate = cursor.getString(cursor.getColumnIndex(COLUMN3));
                     String taskTime = cursor.getString(cursor.getColumnIndex(COLUMN4));
-                    int taskReminder = cursor.getInt(cursor.getColumnIndex(COLUMN5));
-                    int taskImportance = cursor.getInt(cursor.getColumnIndex(COLUMN6));
+                    int taskImportance = cursor.getInt(cursor.getColumnIndex(COLUMN5));
 
                     //insert all data in tasksList with TaskConstructor object
-                    taskLists.add(new TaskConstructor(id, taskName, taskDate, taskTime, taskReminder, taskImportance));
+                    taskLists.add(new TaskConstructor(id, taskName, taskDate, taskTime, taskImportance));
                 }
             }
         }
         return taskLists;
-    }
-
-    Calendar getDateTime(String id){
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        try (Cursor cursor = db.rawQuery("SELECT " +COLUMN3+ ", " +COLUMN4+ " WHERE "+COLUMN1+ " = " +id , null)) {
-            String date = cursor.getString(cursor.getColumnIndex(COLUMN3));
-            String time = cursor.getString(cursor.getColumnIndex(COLUMN4));
-            return stringToCalendar(date, time);
-        }
-    }
-
-    private Calendar stringToCalendar(String date, String time){
-        String[] dateArr = date.split("/");
-        String[] timeArr = time.split(":");
-
-        Calendar calendar= Calendar.getInstance();
-        calendar.set(Calendar.MINUTE, Integer.parseInt(timeArr[0]));
-        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeArr[1]));
-        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateArr[0]));
-        calendar.set(Calendar.MONTH, Integer.parseInt(dateArr[1]));
-        calendar.set(Calendar.YEAR,Integer.parseInt(dateArr[2]));
-
-        return calendar;
     }
 
     int deleteData(String id){
@@ -122,7 +93,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     long getImportantCount(){
         SQLiteDatabase db = this.getWritableDatabase();
-        return DatabaseUtils.queryNumEntries(db, TABLE_NAME, COLUMN6+" = 1");
+        return DatabaseUtils.queryNumEntries(db, TABLE_NAME, COLUMN5+" = 1");
     }
 
     long getPlannedTaskCount(){

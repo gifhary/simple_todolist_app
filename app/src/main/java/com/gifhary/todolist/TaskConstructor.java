@@ -8,15 +8,13 @@ public class TaskConstructor implements Parcelable {
     private String taskName;
     private String taskDate;
     private String taskTime;
-    private int taskReminder;
     private int taskImportance;
 
-    public TaskConstructor(int taskId, String taskName, String taskDate, String taskTime, int taskReminder, int taskImportance){
+    public TaskConstructor(int taskId, String taskName, String taskDate, String taskTime, int taskImportance){
         this.taskId = taskId;
         this.taskName = taskName;
         this.taskDate = taskDate;
         this.taskTime = taskTime;
-        this.taskReminder = taskReminder;
         this.taskImportance = taskImportance;
     }
 
@@ -25,7 +23,6 @@ public class TaskConstructor implements Parcelable {
         taskName = in.readString();
         taskDate = in.readString();
         taskTime = in.readString();
-        taskReminder = in.readInt();
         taskImportance = in.readInt();
     }
 
@@ -73,14 +70,6 @@ public class TaskConstructor implements Parcelable {
         this.taskTime = taskTime;
     }
 
-    public int getTaskReminder() {
-        return taskReminder;
-    }
-
-    public void setTaskReminder(int taskReminder) {
-        this.taskReminder = taskReminder;
-    }
-
     public int getTaskImportance() {
         return taskImportance;
     }
@@ -100,7 +89,6 @@ public class TaskConstructor implements Parcelable {
         dest.writeString(taskName);
         dest.writeString(taskDate);
         dest.writeString(taskTime);
-        dest.writeInt(taskReminder);
         dest.writeInt(taskImportance);
     }
 }

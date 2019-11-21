@@ -5,13 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,8 +29,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashSet;
-import java.util.Set;
 
 import static com.gifhary.todolist.MainActivity.PREFERENCES;
 
@@ -49,7 +43,6 @@ public class ToDoActivity extends AppCompatActivity {
 
     private String taskDate = "";
     private String taskTime = "";
-    private int taskReminder = 0;
     private int taskImportance = 0;
 
     private View addTaskView;
@@ -192,10 +185,9 @@ public class ToDoActivity extends AppCompatActivity {
         setReminderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (taskReminder == 0){
+                if (taskTime.equals("")){
                     showTimePicker();
                 }else {
-                    taskReminder = 0;
                     taskTime = "";
                     changeBtnColor(setReminderBtn, taskTime);
                 }
@@ -224,9 +216,9 @@ public class ToDoActivity extends AppCompatActivity {
         DatabaseHelper databaseHelper = new DatabaseHelper(ToDoActivity.this);
 
         //add data method will return row id of data just inserted
-        long result = databaseHelper.addData(taskName, taskDate, taskTime, taskReminder, taskImportance);
+        long result = databaseHelper.addData(taskName, taskDate, taskTime, taskImportance);
 
-        Log.d(TAG, "task to save : " +taskName+" | " +taskDate+ " | " +taskTime+ " | " +taskReminder+ " | " +taskImportance);
+        Log.d(TAG, "task to save : " +taskName+" | " +taskDate+ " | " +taskTime+ " | " +taskImportance);
         Log.d(TAG, "Just inserted row id : " + result);
 
         if (result == -1){
@@ -235,15 +227,10 @@ public class ToDoActivity extends AppCompatActivity {
         }else {
             Toast.makeText(getApplicationContext(), "Task added", Toast.LENGTH_LONG).show();
             //immediately added to taskLists array instead of get newly added data from database
-            taskLists.add(new TaskConstructor((int) result, taskName, taskDate, taskTime, taskReminder, taskImportance));
+            taskLists.add(new TaskConstructor((int) result, taskName, taskDate, taskTime, taskImportance));
 
             //update recycler view
             taskAdapter.notifyItemInserted(taskLists.size()-1);
-
-            if (!taskDate.equals("") && !taskTime.equals("")){
-                setAlarm((int) result, stringToCalendar(taskDate, taskTime));
-                saveIdToSet(result);
-            }
 
             //set all new task variable to default value
             setVarToDefault();
@@ -251,52 +238,9 @@ public class ToDoActivity extends AppCompatActivity {
         }
     }
 
-    private Calendar stringToCalendar(String date, String time){
-        String[] dateArr = date.split("/");
-        String[] timeArr = time.split(":");
-
-        Calendar calendar= Calendar.getInstance();
-        calendar.set(Calendar.MINUTE, Integer.parseInt(timeArr[0]));
-        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeArr[1]));
-        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateArr[0]));
-        calendar.set(Calendar.MONTH, Integer.parseInt(dateArr[1]));
-        calendar.set(Calendar.YEAR,Integer.parseInt(dateArr[2]));
-
-        return calendar;
-    }
-
-    private void setAlarm(int id, Calendar calendar) {
-        AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-
-        Intent intent = new Intent(this, NotificationReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, id, intent,PendingIntent.FLAG_ONE_SHOT);
-
-        manager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-    }
-
-    //save task id that has reminder on to shared preference
-    //to load later in case user restart the phone scheduled
-    // task notification will be cleared if phone restarted
-    private void saveIdToSet(long id){
-        Set<String> taskId = getSavedTaskId();
-        taskId.add(String.valueOf(id));
-
-        SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
-        SharedPreferences.Editor prefsEditor = prefs.edit();
-
-        prefsEditor.putStringSet("notifyId", new HashSet<String>());
-        prefsEditor.apply();
-    }
-
-    private Set<String> getSavedTaskId(){
-        SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
-        return prefs.getStringSet("notifyId", new HashSet<String>());
-    }
-
     private void setVarToDefault(){
         taskDate = "";
         taskTime = "";
-        taskReminder = 0;
         taskImportance = 0;
     }
 
@@ -343,8 +287,6 @@ public class ToDoActivity extends AppCompatActivity {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         taskTime = hourOfDay + ":" + minute;
-                        //set taskReminder to 1 or equal to TRUE when user has set the reminder time
-                        taskReminder = 1;
                         changeBtnColor(setReminderBtn, taskTime);
 
                         Log.d(TAG,"User pick time : "+hourOfDay + ":" + minute);

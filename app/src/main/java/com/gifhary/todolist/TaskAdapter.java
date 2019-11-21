@@ -60,8 +60,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             holder.cardDate.setText(taskConstructor.getTaskDate());
         }
 
-        if (taskConstructor.getTaskReminder() != 1){
+        if (taskConstructor.getTaskTime().equals("")){
             holder.cardReminderIcon.setVisibility(View.INVISIBLE);
+            holder.cardTime.setVisibility(View.INVISIBLE);
+        }else {
+            holder.cardTime.setText(taskConstructor.getTaskTime());
         }
 
         setCheckListener(holder.cardCheckBox, holder.cardTaskId.getText().toString(), position);
@@ -151,6 +154,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         ImageView cardDateIcon;
         TextView cardDate;
         ImageView cardReminderIcon;
+        TextView cardTime;
 
         TaskViewHolder(View v) {
             super(v);
@@ -161,6 +165,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             cardDateIcon = v.findViewById(R.id.cardDateIcon);
             cardDate = v.findViewById(R.id.cardDate);
             cardReminderIcon = v.findViewById(R.id.cardReminderIcon);
+            cardTime = v.findViewById(R.id.cardTime);
         }
     }
 }
