@@ -7,8 +7,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,6 +33,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.gifhary.todolist.MainActivity.PREFERENCES;
 
@@ -235,10 +240,57 @@ public class ToDoActivity extends AppCompatActivity {
             //update recycler view
             taskAdapter.notifyItemInserted(taskLists.size()-1);
 
+            if (!taskDate.equals("") && !taskTime.equals("")){
+                setAlarm((int) result, stringToCalendar(taskDate, taskTime));
+                saveIdToSet(result);
+            }
+
             //set all new task variable to default value
             setVarToDefault();
             setBoolPrefs("isTaskEdited", true);
         }
+    }
+
+    private Calendar stringToCalendar(String date, String time){
+        String[] dateArr = date.split("/");
+        String[] timeArr = time.split(":");
+
+        Calendar calendar= Calendar.getInstance();
+        calendar.set(Calendar.MINUTE, Integer.parseInt(timeArr[0]));
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeArr[1]));
+        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateArr[0]));
+        calendar.set(Calendar.MONTH, Integer.parseInt(dateArr[1]));
+        calendar.set(Calendar.YEAR,Integer.parseInt(dateArr[2]));
+
+        return calendar;
+    }
+
+    private void setAlarm(int id, Calendar calendar) {
+        AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(this, NotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, id, intent,PendingIntent.FLAG_ONE_SHOT);
+
+        manager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+    }
+
+    //save task id that has reminder on to shared preference
+    //to load later in case user restart the phone scheduled
+    // task notification will be cleared if phone restarted
+    private void saveIdToSet(long id){
+        Set<String> taskId = getSavedTaskId();
+        taskId.add(String.valueOf(id));
+
+        SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+
+        prefsEditor.putStringSet("notifyId", new HashSet<String>());
+        prefsEditor.apply();
+    }
+
+    private Set<String> getSavedTaskId(){
+        SharedPreferences prefs = getSharedPreferences(PREFERENCES, 0);
+        return prefs.getStringSet("notifyId", new HashSet<String>());
     }
 
     private void setVarToDefault(){

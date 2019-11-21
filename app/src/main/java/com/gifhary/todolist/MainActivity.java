@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -22,6 +21,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //database task data
+        DatabaseHelper db = new DatabaseHelper(this);
+        final ArrayList<TaskConstructor> tasks = db.getAllData();
+
         //two second splash screen
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -35,7 +38,9 @@ public class MainActivity extends AppCompatActivity {
                     setTodayTaskCount();
 
                     Intent nameHasSet = new Intent(MainActivity.this, HomeActivity.class);
-                    nameHasSet.putParcelableArrayListExtra("taskData", getAllTask());
+                    if (tasks.size()>0){
+                        nameHasSet.putParcelableArrayListExtra("taskData", tasks);
+                    }
                     startActivity(nameHasSet);
                     finish();
 
@@ -57,31 +62,6 @@ public class MainActivity extends AppCompatActivity {
         assert userName != null;
         Log.d(TAG, "has user set their name? : " + !userName.equals(""));
         return !userName.equals("");
-    }
-
-    private ArrayList<TaskConstructor> getAllTask(){
-        DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);
-        ArrayList<TaskConstructor> taskLists = new ArrayList<>();
-
-        //get all task from database
-        Log.d(TAG, "getAllTask");
-        Cursor cursor = databaseHelper.getAllData();
-        if (cursor.getCount() > 0){
-            while (cursor.moveToNext()) {
-                int id = cursor.getInt(cursor.getColumnIndex("id"));
-                String taskName = cursor.getString(cursor.getColumnIndex("task_name"));
-                String taskDate = cursor.getString(cursor.getColumnIndex("task_date"));
-                String taskTime = cursor.getString(cursor.getColumnIndex("task_time"));
-                int taskReminder = cursor.getInt(cursor.getColumnIndex("task_reminder"));
-                int taskImportance = cursor.getInt(cursor.getColumnIndex("task_importance"));
-
-                Log.d(TAG, "Loaded data from database : "+id+"|"+taskName+"|"+taskDate+"|"+taskTime+"|"+taskReminder+"|"+taskImportance);
-
-                //insert all data in tasksList with TaskConstructor object
-                taskLists.add(new TaskConstructor(id, taskName, taskDate, taskTime, taskReminder, taskImportance));
-            }
-        }
-        return taskLists;
     }
 
     private void setTaskCount(){

@@ -9,6 +9,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "to_do_list";
@@ -57,19 +60,60 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.insert(TABLE_NAME, null, contentValues);
     }
 
-    Cursor getAllData(){
+    ArrayList<TaskConstructor> getAllData(){
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+
+        ArrayList<TaskConstructor> taskLists = new ArrayList<>();
+        try (Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null)) {
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    int id = cursor.getInt(cursor.getColumnIndex(COLUMN1));
+                    String taskName = cursor.getString(cursor.getColumnIndex(COLUMN2));
+                    String taskDate = cursor.getString(cursor.getColumnIndex(COLUMN3));
+                    String taskTime = cursor.getString(cursor.getColumnIndex(COLUMN4));
+                    int taskReminder = cursor.getInt(cursor.getColumnIndex(COLUMN5));
+                    int taskImportance = cursor.getInt(cursor.getColumnIndex(COLUMN6));
+
+                    //insert all data in tasksList with TaskConstructor object
+                    taskLists.add(new TaskConstructor(id, taskName, taskDate, taskTime, taskReminder, taskImportance));
+                }
+            }
+        }
+        return taskLists;
+    }
+
+    Calendar getDateTime(String id){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try (Cursor cursor = db.rawQuery("SELECT " +COLUMN3+ ", " +COLUMN4+ " WHERE "+COLUMN1+ " = " +id , null)) {
+            String date = cursor.getString(cursor.getColumnIndex(COLUMN3));
+            String time = cursor.getString(cursor.getColumnIndex(COLUMN4));
+            return stringToCalendar(date, time);
+        }
+    }
+
+    private Calendar stringToCalendar(String date, String time){
+        String[] dateArr = date.split("/");
+        String[] timeArr = time.split(":");
+
+        Calendar calendar= Calendar.getInstance();
+        calendar.set(Calendar.MINUTE, Integer.parseInt(timeArr[0]));
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeArr[1]));
+        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateArr[0]));
+        calendar.set(Calendar.MONTH, Integer.parseInt(dateArr[1]));
+        calendar.set(Calendar.YEAR,Integer.parseInt(dateArr[2]));
+
+        return calendar;
     }
 
     int deleteData(String id){
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_NAME, "id = "+ id, null);
+        return db.delete(TABLE_NAME, COLUMN1+" = "+ id, null);
     }
 
     int updateData(String id, ContentValues values){
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.update(TABLE_NAME, values, "id = " + id, null);
+        return db.update(TABLE_NAME, values, COLUMN1+" = "+ id, null);
     }
     long getTaskCount(){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -78,17 +122,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     long getImportantCount(){
         SQLiteDatabase db = this.getWritableDatabase();
-        return DatabaseUtils.queryNumEntries(db, TABLE_NAME, "task_importance = 1");
+        return DatabaseUtils.queryNumEntries(db, TABLE_NAME, COLUMN6+" = 1");
     }
 
     long getPlannedTaskCount(){
         SQLiteDatabase db = this.getWritableDatabase();
-        return DatabaseUtils.queryNumEntries(db, TABLE_NAME, "NOT task_date = ''");
+        return DatabaseUtils.queryNumEntries(db, TABLE_NAME, "NOT" +COLUMN3+" = ''");
     }
 
     long getTodayTaskCount(String todayDate){
         SQLiteDatabase db = this.getWritableDatabase();
-        return DatabaseUtils.queryNumEntries(db, TABLE_NAME, "task_date = '" + todayDate + "'");
+        return DatabaseUtils.queryNumEntries(db, TABLE_NAME, COLUMN3+" = '" + todayDate + "'");
     }
 
 }

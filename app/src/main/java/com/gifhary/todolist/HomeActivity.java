@@ -370,9 +370,12 @@ public class HomeActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
+
         if (getBoolPrefs("isTaskEdited")){
             Log.d(TAG, "onResume : Task edited true");
-            taskLists = getAllTask();
+            DatabaseHelper databaseHelper = new DatabaseHelper(this);
+
+            taskLists = databaseHelper.getAllData();
             divideTaskData(taskLists);
             refreshTaskCounts();
 
@@ -380,7 +383,7 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    private synchronized void divideTaskData(final ArrayList<TaskConstructor> list){
+    private void divideTaskData(final ArrayList<TaskConstructor> list){
         importantTasks.clear();
         plannedTasks.clear();
         todayTasks.clear();
@@ -414,33 +417,6 @@ public class HomeActivity extends AppCompatActivity {
 
         Log.d(TAG, "Today : "+day+ "/" + month + "/" + year);
         return day+ "/" + month + "/" + year;
-    }
-
-    //might use another way to update tasks list, at this time this is the simplest
-    //way to do, but not efficient
-    private ArrayList<TaskConstructor> getAllTask(){
-        DatabaseHelper databaseHelper = new DatabaseHelper(HomeActivity.this);
-        ArrayList<TaskConstructor> taskLists = new ArrayList<>();
-
-        //get all task from database
-        Log.d(TAG, "getAllTask");
-        Cursor cursor = databaseHelper.getAllData();
-        if (cursor.getCount() > 0){
-            while (cursor.moveToNext()) {
-                int id = cursor.getInt(cursor.getColumnIndex("id"));
-                String taskName = cursor.getString(cursor.getColumnIndex("task_name"));
-                String taskDate = cursor.getString(cursor.getColumnIndex("task_date"));
-                String taskTime = cursor.getString(cursor.getColumnIndex("task_time"));
-                int taskReminder = cursor.getInt(cursor.getColumnIndex("task_reminder"));
-                int taskImportance = cursor.getInt(cursor.getColumnIndex("task_importance"));
-
-                Log.d(TAG, "Loaded data from database : "+id+"|"+taskName+"|"+taskDate+"|"+taskTime+"|"+taskReminder+"|"+taskImportance);
-
-                //insert all data in tasksList with TaskConstructor object
-                taskLists.add(new TaskConstructor(id, taskName, taskDate, taskTime, taskReminder, taskImportance));
-            }
-        }
-        return taskLists;
     }
 
     private void setIntPrefs(String key, int value){
