@@ -17,8 +17,8 @@
     <string name="today">Today</string>
 
     <string name="task_name">Task name</string>
-    <string name="set_due_date">Set due date</string>
-    <string name="set_reminder">Set reminder</string>
+    <string name="set_due_date">Set date</string>
+    <string name="set_reminder">Remind me</string>
     <string name="check_box">Check box</string>
 
     <string name="task_id">id</string>

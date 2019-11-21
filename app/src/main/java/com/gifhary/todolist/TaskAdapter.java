@@ -104,7 +104,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 ContentValues contentValues = new ContentValues();
                 int result;
                 if (currentValue == 0){
-                    //imageView.setImageResource(R.drawable.ic_star_on);
                     //value to update database
                     contentValues.put("task_importance", 1);
                     //update database
@@ -114,7 +113,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     notifyItemChanged(position);
                     Log.d(TAG, "Updated task id : " + id + " result : " +result);
                 }else {
-                    //imageView.setImageResource(R.drawable.important);
                     //value to update database
                     contentValues.put("task_importance", 0);
                     //update database
