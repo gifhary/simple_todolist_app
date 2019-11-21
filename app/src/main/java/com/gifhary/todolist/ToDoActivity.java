@@ -63,7 +63,6 @@ public class ToDoActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //remove title in action bar
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        //database class
 
         //get intent extra from splash screen
         Intent intent = getIntent();
