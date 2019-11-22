@@ -45,7 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    long addData(String taskName, String taskDate, String taskTime, int taskImportance){
+    public long addData(String taskName, String taskDate, String taskTime, int taskImportance){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN2, taskName);
@@ -56,7 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.insert(TABLE_NAME, null, contentValues);
     }
 
-    ArrayList<TaskConstructor> getAllData(){
+    public ArrayList<TaskConstructor> getAllData(){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ArrayList<TaskConstructor> taskLists = new ArrayList<>();
@@ -77,31 +77,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return taskLists;
     }
 
-    int deleteData(String id){
+    public int deleteData(String id){
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_NAME, COLUMN1+" = "+ id, null);
     }
 
-    int updateData(String id, ContentValues values){
+    public int updateData(String id, ContentValues values){
         SQLiteDatabase db = this.getWritableDatabase();
         return db.update(TABLE_NAME, values, COLUMN1+" = "+ id, null);
     }
-    long getTaskCount(){
+    public long getTaskCount(){
         SQLiteDatabase db = this.getWritableDatabase();
         return DatabaseUtils.queryNumEntries(db, TABLE_NAME);
     }
 
-    long getImportantCount(){
+    public long getImportantCount(){
         SQLiteDatabase db = this.getWritableDatabase();
         return DatabaseUtils.queryNumEntries(db, TABLE_NAME, COLUMN5+" = 1");
     }
 
-    long getPlannedTaskCount(){
+    public long getPlannedTaskCount(){
         SQLiteDatabase db = this.getWritableDatabase();
         return DatabaseUtils.queryNumEntries(db, TABLE_NAME, "NOT " +COLUMN3+" = ''");
     }
 
-    long getTodayTaskCount(String todayDate){
+    public long getTodayTaskCount(String todayDate){
         SQLiteDatabase db = this.getWritableDatabase();
         return DatabaseUtils.queryNumEntries(db, TABLE_NAME, COLUMN3+" = '" + todayDate + "'");
     }
