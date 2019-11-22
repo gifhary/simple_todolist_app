@@ -83,7 +83,7 @@ public class ListAdapter extends ArrayAdapter<ListInfo> {
             taskCountTextView.setText(taskCountStr);
 
             Log.d(TAG, "icon : " + iconName + "|| name : " + menuName + "|| task count : " + taskCount);
-            return convertView;
+            return localView;
         }
     }
 }

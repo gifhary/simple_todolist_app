@@ -271,7 +271,7 @@ public class ToDoActivity extends AppCompatActivity {
     //TODO future time only can be selected
     //this code now allow any time to be selected
     private void showTimePicker(){
-        if (taskDate.equals("")){
+        if ("".equals(taskDate)){
             Toast.makeText(getApplicationContext(), "Set date first", Toast.LENGTH_LONG).show();
             return;
         }
