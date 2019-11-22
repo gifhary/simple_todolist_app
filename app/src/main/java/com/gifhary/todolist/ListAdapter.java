@@ -33,6 +33,9 @@ public class ListAdapter extends ArrayAdapter<ListInfo> {
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        View localView = convertView;
+        LayoutInflater inflater = LayoutInflater.from(context);
+
         String iconName = Objects.requireNonNull(getItem(position)).getIconName();
         String menuName = Objects.requireNonNull(getItem(position)).getMenuName();
         int taskCount = Objects.requireNonNull(getItem(position)).getTaskCount();
@@ -43,12 +46,13 @@ public class ListAdapter extends ArrayAdapter<ListInfo> {
             taskCountStr = String.valueOf(taskCount);
         }
 
-        LayoutInflater inflater = LayoutInflater.from(context);
-        convertView = inflater.inflate(resource, parent, false);
+        if (localView == null){
+            localView = inflater.inflate(resource, parent, false);
+        }
 
-        ImageView menuIconImageView = convertView.findViewById(R.id.menuIconImageView);
-        TextView menuNameTextView = convertView.findViewById(R.id.menuNameTextView);
-        TextView taskCountTextView = convertView.findViewById(R.id.taskCountTextView);
+        ImageView menuIconImageView = localView.findViewById(R.id.menuIconImageView);
+        TextView menuNameTextView = localView.findViewById(R.id.menuNameTextView);
+        TextView taskCountTextView = localView.findViewById(R.id.taskCountTextView);
 
         //set listView item for avatar images listView
         if (iconName.contains("avatar")){
@@ -68,7 +72,7 @@ public class ListAdapter extends ArrayAdapter<ListInfo> {
                 e.printStackTrace();
                 Log.d(TAG, "ERROR : LOAD IMAGE FROM ASSETS");
             }
-            return convertView;
+            return localView;
         }
         //set listView item for menu listView
         else {

@@ -25,7 +25,7 @@ public class SetNameActivity extends AppCompatActivity {
         EditText yourNameEditText = findViewById(R.id.yourNameEditText);
         final String userName = yourNameEditText.getText().toString();
 
-        if (!userName.equals("")){
+        if (!"".equals(userName)){
             //saving user name in another thread to avoid UI interruption
             new Thread(new Runnable() {
                 @Override

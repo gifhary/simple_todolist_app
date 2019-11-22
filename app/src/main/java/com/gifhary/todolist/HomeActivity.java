@@ -65,7 +65,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //get username from preferences and display to username text view
         userName = getStringPrefs("userName");
-        if (userName.equals("")){
+        if ("".equals(userName)){
             //name not empty assurance. if empty go back to set name activity
             Intent backToSetName = new Intent(this, SetNameActivity.class);
             startActivity(backToSetName);
@@ -102,7 +102,7 @@ public class HomeActivity extends AppCompatActivity {
         String avatarFile = getStringPrefs("avatarFile");
         userAvatarImageView = findViewById(R.id.userAvatarImageView);
         //if preferences is empty for avatar file name, default image displayed
-        if (!avatarFile.equals("")){
+        if (!"".equals(avatarFile)){
             try {
                 AssetManager assetManager = this.getAssets();
                 //read avatar image from assets/avatars folder
@@ -151,16 +151,16 @@ public class HomeActivity extends AppCompatActivity {
             Intent intent = new Intent(this, aClass);
 
             //transfer task list according to menu category to target activity
-            if (activityName.equals("ToDo")){
+            if ("ToDo".equals(activityName)){
                 intent.putParcelableArrayListExtra("taskData", taskLists);
             }
-            if (activityName.equals("Important")){
+            if ("Important".equals(activityName)){
                 intent.putParcelableArrayListExtra("taskData", importantTasks);
             }
-            if (activityName.equals("Planned")){
+            if ("Planned".equals(activityName)){
                 intent.putParcelableArrayListExtra("taskData", plannedTasks);
             }
-            if (activityName.equals("Today")){
+            if ("Today".equals(activityName)){
                 intent.putParcelableArrayListExtra("taskData", todayTasks);
             }
 
@@ -261,7 +261,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
 
                 String newName = editNameEditText.getText().toString();
-                if (isNameEdited(newName) && !newName.equals("")){
+                if (isNameEdited(newName) && !"".equals(newName)){
                     //update user name in textView
                     userName = newName;
                     userNameTextView.setText(userName);

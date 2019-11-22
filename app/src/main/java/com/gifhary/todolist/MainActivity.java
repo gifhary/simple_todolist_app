@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         assert userName != null;
         Log.d(TAG, "has user set their name? : " + !userName.equals(""));
-        return !userName.equals("");
+        return !"".equals(userName);
     }
 
     private void setTaskCount(){

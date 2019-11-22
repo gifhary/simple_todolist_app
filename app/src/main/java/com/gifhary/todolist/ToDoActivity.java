@@ -66,7 +66,9 @@ public class ToDoActivity extends AppCompatActivity {
 
         //get intent extra from splash screen
         Intent intent = getIntent();
-        taskLists = intent.getParcelableArrayListExtra("taskData");
+        if (intent.getParcelableArrayListExtra("taskData") != null){
+            taskLists = intent.getParcelableArrayListExtra("taskData");
+        }
 
         TextView todayDateTextView = findViewById(R.id.todayDateTextView);
         //get today date and display
@@ -115,7 +117,7 @@ public class ToDoActivity extends AppCompatActivity {
     private void showAddTaskDialog(){
         setDialogContentClickable();
 
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ToDoActivity.this);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("New Task");
         alertDialog.setView(addTaskView);
 
@@ -141,7 +143,7 @@ public class ToDoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String taskName = taskNameEditText.getText().toString();
                 //keep alertDialog when user hasn't enter task name
-                if (!taskName.equals("")){
+                if (!"".equals(taskName)){
                     saveTask(taskName);
                     alert.dismiss();
                 }else {
@@ -173,7 +175,7 @@ public class ToDoActivity extends AppCompatActivity {
         setDueDateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (taskDate.equals("")){
+                if ("".equals(taskDate)){
                     showDatePicker();
                 }else {
                     taskDate = "";
@@ -184,7 +186,7 @@ public class ToDoActivity extends AppCompatActivity {
         setReminderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (taskTime.equals("")){
+                if ("".equals(taskTime)){
                     showTimePicker();
                 }else {
                     taskTime = "";
@@ -204,7 +206,7 @@ public class ToDoActivity extends AppCompatActivity {
 
     //change button color for set due date and set reminder button
     private void changeBtnColor(ConstraintLayout layout, String value){
-        if (!value.equals("")){
+        if (!"".equals(value)){
             layout.setBackgroundResource(R.drawable.rounded_corner_green);
         }else {
             layout.setBackgroundResource(R.drawable.rounded_corner_grey);
