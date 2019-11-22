@@ -139,7 +139,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 SharedPreferences prefs = context.getSharedPreferences(PREFERENCES, 0);
                 SharedPreferences.Editor prefsEditor = prefs.edit();
 
-                prefsEditor.putBoolean("isTaskEdited", value);
+                prefsEditor.putBoolean(key, value);
                 prefsEditor.apply();
             }
         }).start();
@@ -147,14 +147,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     static class TaskViewHolder extends RecyclerView.ViewHolder {
 
-        TextView cardTaskId;
-        ImageView cardCheckBox;
-        TextView cardTaskName;
-        ImageView cardImportantIcon;
-        ImageView cardDateIcon;
-        TextView cardDate;
-        ImageView cardReminderIcon;
-        TextView cardTime;
+        private TextView cardTaskId;
+        private ImageView cardCheckBox;
+        private TextView cardTaskName;
+        private ImageView cardImportantIcon;
+        private ImageView cardDateIcon;
+        private TextView cardDate;
+        private ImageView cardReminderIcon;
+        private TextView cardTime;
 
         TaskViewHolder(View v) {
             super(v);
