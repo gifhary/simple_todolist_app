@@ -375,28 +375,36 @@ public class HomeActivity extends AppCompatActivity {
             DatabaseHelper databaseHelper = new DatabaseHelper(this);
 
             taskLists = databaseHelper.getAllData();
-            divideTaskData(taskLists);
-            refreshTaskCounts();
+            try {
+                divideTaskData(taskLists);
+            }finally {
+                refreshTaskCounts();
+            }
 
             setBoolPrefs("isTaskEdited", false);
         }
     }
 
     private void divideTaskData(final ArrayList<TaskConstructor> list){
-        importantTasks.clear();
-        plannedTasks.clear();
-        todayTasks.clear();
-        for (TaskConstructor task : list){
-            if(task.getTaskImportance() != 0){
-                importantTasks.add(task);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                importantTasks.clear();
+                plannedTasks.clear();
+                todayTasks.clear();
+                for (TaskConstructor task : list){
+                    if(task.getTaskImportance() != 0){
+                        importantTasks.add(task);
+                    }
+                    if (!task.getTaskDate().equals("")){
+                        plannedTasks.add(task);
+                    }
+                    if (task.getTaskDate().equals(getTodayDate())){
+                        todayTasks.add(task);
+                    }
+                }
             }
-            if (!task.getTaskDate().equals("")){
-                plannedTasks.add(task);
-            }
-            if (task.getTaskDate().equals(getTodayDate())){
-                todayTasks.add(task);
-            }
-        }
+        });
     }
 
     private void refreshTaskCounts(){
